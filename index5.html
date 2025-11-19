@@ -13,8 +13,113 @@
         body {
             margin: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f4f4f9;
+            /* New dark background for contrast with the blobs */
+            background-color: #121217; 
+            min-height: 100vh;
+            overflow-x: hidden; 
             perspective: none; 
+            color: #f4f4f9; /* Default text color for visibility */
+        }
+
+        h1, h2, p {
+            color: #f4f4f9;
+        }
+
+        /* Featured Project Section Styling */
+        h1 {
+            color: #4CAF50; 
+            font-size: 3rem;
+            margin-bottom: 50px;
+        }
+
+        /*
+        ========================================
+        2. Background Animation 
+        ========================================
+        */
+        #background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: -1; 
+        }
+
+        .bg-blob {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(150px); 
+            opacity: 0.5;
+            animation: blob-move 20s infinite alternate;
+        }
+
+        .bg-blob:nth-child(1) {
+            background-color: #ff5733; /* Orange-red */
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-blob:nth-child(2) {
+            background-color: #33ff57; /* Green */
+            top: 70%;
+            left: 80%;
+            width: 450px;
+            height: 450px;
+            animation-delay: 5s;
+        }
+
+        .bg-blob:nth-child(3) {
+            background-color: #3357ff; /* Blue */
+            top: 40%;
+            left: 40%;
+            animation-delay: 10s;
+        }
+
+        @keyframes blob-move {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            33% {
+                transform: translate(150px, -200px) scale(1.2) rotate(60deg);
+            }
+            66% {
+                transform: translate(-100px, 100px) scale(0.9) rotate(120deg);
+            }
+            100% {
+                transform: translate(0, 0) scale(1) rotate(180deg);
+            }
+        }
+        
+        /*
+        ========================================
+        3. Content Wrapper & Fixed Elements
+        ========================================
+        */
+
+        #content-wrapper {
+            background: rgba(18, 18, 23, 0.4);
+            min-height: 100vh;
+            backdrop-filter: blur(10px) brightness(1.1); 
+            z-index: 5;
+        }
+
+        /* The standard header bar container */
+        #main-header {
+            width: 100%;
+            height: 80px; 
+            position: fixed; 
+            top: 0;
+            left: 0;
+            background-color: rgba(18, 18, 23, 0.8);
+            transition: none;
+            z-index: 9999; 
+            transform: none;
+            backdrop-filter: blur(5px) brightness(1.1); 
         }
 
         /* The Logo Container (Parent) */
@@ -22,13 +127,9 @@
             width: 80px; 
             height: 80px;
             border-radius: 50%;
-            
             position: fixed; 
-            /* This transition is necessary to make the sudden 180-degree flip visible */
             transition: transform 0.3s ease-out; 
             z-index: 10000; 
-
-            /* 3D properties */
             transform-style: preserve-3d;
             perspective: 1000px; 
             background-color: transparent; 
@@ -44,18 +145,12 @@
             box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
             z-index: 10001; 
             pointer-events: none;
-            
-            /* Transition only for movement (top/left), NOT for opacity */
-            transition: 
-                top 0.2s ease-out, 
-                left 0.2s ease-out;
-            
+            transition: top 0.2s ease-out, left 0.2s ease-out;
             display: flex;
             justify-content: center;
             align-items: center;
             font-size: 12px; 
             color: #333;
-            /* Ensure it is centered on its own fixed position */
             transform: translate(-50%, -50%); 
         }
 
@@ -71,7 +166,6 @@
             font-size: 20px;
             font-weight: bold;
             color: white;
-            
             backface-visibility: hidden;
         }
 
@@ -87,52 +181,309 @@
             transform: rotateY(180deg);
         }
 
-        /* The standard header bar container */
-        #main-header {
-            width: 100%;
-            height: 80px; 
-            position: fixed; 
-            top: 0;
-            left: 0;
-            background-color: #ffffff;
-            transition: none;
-            z-index: 9999; 
-            transform: none;
-        }
-
         /* Content to ensure scrolling is possible */
         #page-content {
-            min-height: 200vh; 
+            min-height: 200vh; /* Keep for scrollable background */
             padding-top: 100vh; 
             text-align: center;
             padding-bottom: 50px;
         }
 
-        h1 {
-            color: #333;
-            font-size: 2.5rem;
+        /*
+        ========================================
+        4. Featured Projects Layout
+        ========================================
+        */
+        .projects-row {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 30px; 
+            max-width: 1200px;
+            margin: 0 auto 100px auto; 
+            padding: 0 20px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05); 
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            width: 100%; 
+            max-width: 300px; 
+            flex-grow: 1; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-align: left;
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1); 
+        }
+
+        .project-card h3 {
+            color: #007bff; 
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .project-card p {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .project-card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.2s;
+        }
+
+        .project-card a:hover {
+            background-color: #388e3c;
+        }
+
+        /*
+        ========================================
+        5. Skills Tree Styles
+        ========================================
+        */
+        #skills-section {
+            padding: 50px 20px;
+            margin-top: 50px;
+            text-align: center;
+        }
+
+        #skills-section h2 {
+            font-size: 2rem;
+            color: #4CAF50;
+            margin-bottom: 40px;
+        }
+
+        .skills-tree-container {
+            max-width: 600px;
+            margin: 0 auto; 
+            text-align: left; 
+            position: relative;
+        }
+
+        .skill-branch {
+            list-style: none;
+            padding-left: 0; 
+            margin: 0;
+        }
+        
+        .skill-branch ul {
+            list-style: none;
+            padding-left: 30px; 
+            margin: 0;
+            position: relative;
+        }
+        
+        /* Vertical Connector Line */
+        .skill-branch ul::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0; 
+            width: 1px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .skill-node {
+            position: relative;
+            padding: 8px 0;
+            font-size: 1.1rem;
+            color: #f4f4f9;
+        }
+
+        /* Horizontal Connector Line */
+        .skill-node:not(.root-skill)::after {
+            content: '';
+            position: absolute;
+            top: 17px; 
+            left: -30px; 
+            width: 30px;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.15);
+        }
+        
+        /* Top Level Styles */
+        .root-skill {
+            font-weight: bold;
+            color: #4CAF50; 
+            padding-left: 0;
+        }
+
+        /* Branch Indicator */
+        .skill-node:not(.root-skill)::before {
+            content: '•';
+            position: absolute;
+            left: -35px;
+            color: #007bff;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        /*
+        ========================================
+        6. Connection Element Styles (formerly Social Media Footer)
+        ========================================
+        */
+        #connection-element {
+            padding: 40px 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(18, 18, 23, 0.6);
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        #connection-element h2 {
+            font-size: 2rem;
+            color: #f4f4f9;
+            margin-bottom: 30px;
+        }
+
+        .social-icons-row {
+            display: flex;
+            justify-content: center;
+            gap: 40px; 
+            margin: 0 auto;
+            max-width: 500px;
+        }
+
+        .social-icon-link {
+            display: block;
+            font-size: 2rem; 
+            color: #f4f4f9;
+            transition: color 0.2s ease, transform 0.2s ease;
+            text-decoration: none;
+        }
+
+        .social-icon-link:hover {
+            color: #4CAF50; 
+            transform: translateY(-3px);
+        }
+        
+        /*
+        ========================================
+        7. Footer Styles 
+        ========================================
+        */
+        footer {
+            background-color: #121217;
+            color: #888;
+            padding: 20px;
+            text-align: center;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
         }
     </style>
 </head>
 <body>
-
+    
+    <div id="background-animation">
+        <div class="bg-blob"></div> 
+        <div class="bg-blob"></div>
+        <div class="bg-blob"></div>
+    </div>
+    
     <header id="main-header"></header>
-    
     <div id="tiny-element"></div> 
-    
     <div id="agency-element">
         <div class="face face-front">AD</div>
         <div class="face face-back">&lt; / &gt;</div>
     </div> 
 
-    <section id="page-content">
-        <h1>Dynamic Web Presence (Responsive)</h1>
-        <p>The tiny element is visible on load and disappears instantly on scroll.</p>
-        <div style="margin-top: 50vh;">
-            <h2>Modern Design Principles</h2>
-            <p>Clean | Intuitive | Accessible</p>
-        </div>
-    </section>
+    <div id="content-wrapper">
+        <section id="page-content">
+            
+            <h1>Featured Projects</h1>
+
+            <div class="projects-row">
+                
+                <div class="project-card">
+                    <h3>E-commerce Platform</h3>
+                    <p>A full-stack e-commerce solution built with React and Node.js, featuring secure payment processing and inventory management.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Real-time Chat App</h3>
+                    <p>A highly scalable web application using WebSockets (Socket.io) for instant messaging and user presence indicators.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Portfolio CMS</h3>
+                    <p>A custom content management system built with Next.js/Vue.js allowing for easy updates and dynamic content fetching.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
+            </div>
+
+            <section id="skills-section">
+                <h2>My Skills Tree 🌳</h2>
+                <div class="skills-tree-container">
+                    <ul class="skill-branch">
+                        <li class="skill-node root-skill">HTML</li>
+                        <li class="skill-node root-skill">CSS</li>
+                        <li class="skill-node major-branch">
+                            JavaScript (Core)
+                            <ul class="skill-branch">
+                                <li class="skill-node">Git & GitHub</li>
+                                <li class="skill-node sub-branch">
+                                    Node.js (Runtime)
+                                    <ul class="skill-branch">
+                                        <li class="skill-node">Express (Framework)</li>
+                                        <li class="skill-node">JWT (Authentication)</li>
+                                    </ul>
+                                </li>
+                                <li class="skill-node sub-branch">
+                                    React (Frontend)
+                                    <ul class="skill-branch">
+                                        <li class="skill-node">React-Router</li>
+                                        <li class="skill-node">Next.js (Framework)</li>
+                                    </ul>
+                                </li>
+                                <li class="skill-node sub-branch">
+                                    Databases
+                                    <ul class="skill-branch">
+                                        <li class="skill-node">MongoDB (NoSQL)</li>
+                                        <li class="skill-node">PostgreSQL (SQL)</li>
+                                    </ul>
+                                </li>
+                            </ul>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+            
+            <section id="connection-element">
+                <h2>Let's Connect</h2>
+                <div class="social-icons-row">
+                    <a href="#" class="social-icon-link" aria-label="Facebook Link">📘</a>
+                    <a href="#" class="social-icon-link" aria-label="X/Twitter Link"></a>
+                    <a href="#" class="social-icon-link" aria-label="Instagram Link">📷</a>
+                    <a href="#" class="social-icon-link" aria-label="Threads Link">🧵</a>
+                </div>
+            </section>
+            
+            <div style="height: 50vh;"></div> 
+        </section>
+
+        <footer>
+            &copy; 2025 Your Name/Agency Name. All Rights Reserved.
+        </footer>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -217,10 +568,10 @@
                 // TINY ELEMENT STYLES (Following Logo + Random Offset + INSTANT DISAPPEAR)
                 
                 // Position based on the logo's center, plus the fixed random offset.
-                tinyElement.style.top = `${currentTop + 80 + randomY}px`;
-                tinyElement.style.left = `${currentLeft + 80 + randomX}px`;
+                tinyElement.style.top = `${currentTop + randomY}px`;
+                tinyElement.style.left = `${currentLeft + randomX}px`;
                 
-                // FIX: Tiny element disappears INSTANTLY if scroll has started (scrollY > 0)
+                // Tiny element disappears INSTANTLY if scroll has started (scrollY > 0)
                 tinyElement.style.opacity = (scrollY === 0) ? 1 : 0;
                 
                 // Header opacity and shadow
