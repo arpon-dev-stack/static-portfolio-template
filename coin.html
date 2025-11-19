@@ -3,121 +3,406 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>3D Flippable Coin</title>
+    <title>Freelance Website - Fully Responsive</title>
     <style>
-        /* CSS Styling for the 3D Coin Effect */
-
+        /*
+        ========================================
+        1. Base Styles 
+        ========================================
+        */
         body {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
             margin: 0;
-            background-color: #f4f4f9;
-            font-family: Arial, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* New dark background for contrast with the blobs */
+            background-color: #121217; 
+            min-height: 100vh;
+            overflow-x: hidden; 
+            perspective: none; 
+            color: #f4f4f9; /* Default text color for visibility */
         }
 
-        /* Sets up the 3D space */
-        .coin-container {
-            width: 200px;
-            height: 200px;
-            perspective: 1000px; /* Defines the 3D viewing perspective */
+        h1, h2, p {
+            color: #f4f4f9;
         }
 
-        /* The element that will be flipped */
-        .coin {
+        /* NEW: Featured Project Section Styling */
+        h1 {
+            /* Changed color for visibility on dark background and increased size */
+            color: #4CAF50; 
+            font-size: 3rem;
+            margin-bottom: 50px;
+        }
+
+        /*
+        ========================================
+        2. Background Animation 
+        ========================================
+        */
+        #background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            position: relative;
-            transition: transform 1s; /* Smooth animation over 1 second */
-            transform-style: preserve-3d; /* Crucial: tells the browser to treat children in 3D */
-            /* Start state: Heads (0 degrees rotation) */
-            transform: rotateY(0deg); 
+            overflow: hidden;
+            z-index: -1; 
         }
 
-        /* Base style for both sides */
-        .side {
+        .bg-blob {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            filter: blur(150px); 
+            opacity: 0.5;
+            animation: blob-move 20s infinite alternate;
+        }
+
+        .bg-blob:nth-child(1) {
+            background-color: #ff5733; /* Orange-red */
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+
+        .bg-blob:nth-child(2) {
+            background-color: #33ff57; /* Green */
+            top: 70%;
+            left: 80%;
+            width: 450px;
+            height: 450px;
+            animation-delay: 5s;
+        }
+
+        .bg-blob:nth-child(3) {
+            background-color: #3357ff; /* Blue */
+            top: 40%;
+            left: 40%;
+            animation-delay: 10s;
+        }
+
+        @keyframes blob-move {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            33% {
+                transform: translate(150px, -200px) scale(1.2) rotate(60deg);
+            }
+            66% {
+                transform: translate(-100px, 100px) scale(0.9) rotate(120deg);
+            }
+            100% {
+                transform: translate(0, 0) scale(1) rotate(180deg);
+            }
+        }
+        
+        /*
+        ========================================
+        3. Content Wrapper & Fixed Elements
+        ========================================
+        */
+
+        #content-wrapper {
+            background: rgba(18, 18, 23, 0.4);
+            min-height: 100vh;
+            backdrop-filter: blur(10px) brightness(1.1); 
+            z-index: 5;
+        }
+
+        /* The standard header bar container */
+        #main-header {
+            width: 100%;
+            height: 80px; 
+            position: fixed; 
+            top: 0;
+            left: 0;
+            background-color: rgba(18, 18, 23, 0.8);
+            transition: none;
+            z-index: 9999; 
+            transform: none;
+            backdrop-filter: blur(5px) brightness(1.1); 
+        }
+
+        /* The Logo Container (Parent) */
+        #agency-element {
+            width: 80px; 
+            height: 80px;
+            border-radius: 50%;
+            position: fixed; 
+            transition: transform 0.3s ease-out; 
+            z-index: 10000; 
+            transform-style: preserve-3d;
+            perspective: 1000px; 
+            background-color: transparent; 
+        }
+
+        /* The tiny floating indicator wrapper (SIBLING) */
+        #tiny-element {
+            position: fixed; 
+            width: 20px; 
+            height: 20px;
+            border-radius: 50%;
+            background-color: #fff; 
+            box-shadow: 0 0 5px rgba(0, 0, 0, 0.2); 
+            z-index: 10001; 
+            pointer-events: none;
+            transition: top 0.2s ease-out, left 0.2s ease-out;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 12px; 
+            color: #333;
+            transform: translate(-50%, -50%); 
+        }
+
+        /* Styles for both Front and Back faces */
+        .face {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* Crucial: Hides the back of the element when facing away */
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            font-size: 32px;
+            font-size: 20px;
             font-weight: bold;
             color: white;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            backface-visibility: hidden;
         }
 
-        /* Style the Front side (Heads) */
-        .front {
-            background-color: gold;
-            transform: rotateY(0deg); /* Starts facing the viewer */
-            border: 5px solid #ffcc00;
+        /* Front Face: The "AD" Logo */
+        .face-front {
+            background-color: #4CAF50; 
+            transform: rotateY(0deg);
         }
 
-        /* Style the Back side (Tails) */
-        .back {
-            background-color: darkgoldenrod;
-            /* Flips the back side initially, so it is hidden behind the front */
-            transform: rotateY(180deg);
-            border: 5px solid #b8860b;
-        }
-
-        /* State when the coin is flipped */
-        .coin.flipped {
+        /* Back Face: The Web Dev Icon */
+        .face-back {
+            background-color: #007bff; 
             transform: rotateY(180deg);
         }
 
-        /* Styling for the button */
-        #flip-button {
-            margin-top: 30px;
-            padding: 12px 25px;
-            font-size: 18px;
-            cursor: pointer;
-            border: none;
-            border-radius: 8px;
-            background-color: #3498db;
+        /* Content to ensure scrolling is possible */
+        #page-content {
+            min-height: 200vh; 
+            padding-top: 100vh; 
+            text-align: center;
+            padding-bottom: 50px;
+        }
+
+        /*
+        ========================================
+        4. Featured Projects Layout
+        ========================================
+        */
+        .projects-row {
+            display: flex;
+            flex-wrap: wrap; 
+            justify-content: center; 
+            gap: 30px; 
+            max-width: 1200px;
+            margin: 0 auto 100px auto; 
+            padding: 0 20px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05); /* Very light, semi-transparent background */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 25px;
+            width: 100%; 
+            max-width: 300px; 
+            flex-grow: 1; 
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+            text-align: left;
+            transition: transform 0.3s ease, background-color 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1); /* Slightly brighter on hover */
+        }
+
+        .project-card h3 {
+            color: #007bff; /* Blue heading */
+            margin-top: 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+            padding-bottom: 10px;
+            font-size: 1.4rem;
+        }
+
+        .project-card p {
+            color: #ccc;
+            font-size: 0.95rem;
+        }
+
+        .project-card a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 8px 15px;
+            background-color: #4CAF50;
             color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: background-color 0.3s;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+            transition: background-color 0.2s;
         }
 
-        #flip-button:hover {
-            background-color: #2980b9;
+        .project-card a:hover {
+            background-color: #388e3c;
         }
     </style>
 </head>
 <body>
+    
+    <div id="background-animation">
+        <div class="bg-blob"></div> 
+        <div class="bg-blob"></div>
+        <div class="bg-blob"></div>
+    </div>
+    
+    <header id="main-header"></header>
+    <div id="tiny-element"></div> 
+    <div id="agency-element">
+        <div class="face face-front">AD</div>
+        <div class="face face-back">&lt; / &gt;</div>
+    </div> 
 
-    <div class="coin-container">
-        <div class="coin" id="myCoin">
-            <div class="side front">
-                <p>HEADS</p>
+    <div id="content-wrapper">
+        <section id="page-content">
+            
+            <h1>Featured Projects</h1>
+
+            <div class="projects-row">
+                
+                <div class="project-card">
+                    <h3>E-commerce Platform</h3>
+                    <p>A full-stack e-commerce solution built with React and Node.js, featuring secure payment processing and inventory management.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Real-time Chat App</h3>
+                    <p>A highly scalable web application using WebSockets (Socket.io) for instant messaging and user presence indicators.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
+                
+                <div class="project-card">
+                    <h3>Portfolio CMS</h3>
+                    <p>A custom content management system built with Next.js/Vue.js allowing for easy updates and dynamic content fetching.</p>
+                    <a href="#" target="_blank">View Project</a>
+                </div>
             </div>
-            <div class="side back">
-                <p>TAILS</p>
-            </div>
-        </div>
+
+            <div style="margin-top: 50vh;">
+                <h2>Modern Design Principles</h2>
+                <p>Clean | Intuitive | Accessible</p>
+                <div style="height: 100vh;"></div> </div>
+        </section>
     </div>
 
-    <button id="flip-button">Flip Coin</button>
-
     <script>
-        // JavaScript for the Flip Interaction
-
-        document.getElementById('flip-button').addEventListener('click', function() {
-            const coin = document.getElementById('myCoin');
+        document.addEventListener('DOMContentLoaded', () => {
+            const element = document.getElementById('agency-element');
+            const header = document.getElementById('main-header');
+            const tinyElement = document.getElementById('tiny-element');
             
-            // Toggles the 'flipped' class.
-            // When the class is added, the CSS transform: rotateY(180deg) is applied.
-            // When the class is removed, it reverts to the original transform: rotateY(0deg).
-            coin.classList.toggle('flipped');
+            // --- 1. CONFIGURATION ---
+            const SCROLL_RANGE = 300; 
+            const BASE_ELEM_SIZE = 80; 
+            const DESIRED_FINAL_SIZE = 50; 
+            
+            // START Values (ScrollY = 0)
+            const SCALE_START = 2.5; 
+            const START_TOP = window.innerHeight / 2;
+            const START_LEFT_VW = 50; 
+            const START_SHADOW = '0 10px 30px rgba(76, 175, 80, 0.4)';
+            
+            // END Values (ScrollY = SCROLL_RANGE)
+            const SCALE_END = DESIRED_FINAL_SIZE / BASE_ELEM_SIZE; 
+            const END_TOP = 40; 
+            const END_LEFT_PX = 50; 
+            
+            // SUDDEN ROTATION THRESHOLD is very low (0.01) to trigger immediately on scroll start.
+            const ROTATION_THRESHOLD = 0.01; 
+            const ROTATE_FINAL = 180; 
+            
+            // Random Positioning and Icon Logic
+            const MAX_OFFSET = 12; 
+            const getRandomOffset = () => Math.floor(Math.random() * (MAX_OFFSET * 2 + 1)) - MAX_OFFSET;
+
+            const skillIcons = [
+                '💻', '🎨', '⚙️', '{ }'
+            ];
+
+            const randomX = getRandomOffset();
+            const randomY = getRandomOffset();
+            const randomIcon = skillIcons[Math.floor(Math.random() * skillIcons.length)];
+
+            // Apply initial content
+            tinyElement.innerHTML = randomIcon;
+            
+            /**
+             * Linear Interpolation (Lerp) function.
+             */
+            const lerp = (a, b, t) => a + (b - a) * t;
+
+            /**
+             * The main function that drives the animation based on scroll.
+             */
+            function handleScroll() {
+                const scrollY = window.scrollY;
+                
+                // Clamp the scroll fraction t between 0.0 and 1.0
+                const t = Math.min(1, Math.max(0, scrollY / SCROLL_RANGE));
+
+                // --- 2. CALCULATE CURRENT VALUES ---
+                
+                // Position and Scale are interpolated smoothly
+                const currentScale = lerp(SCALE_START, SCALE_END, t);
+                const currentTop = lerp(START_TOP, END_TOP, t);
+                const startLeftInPx = (START_LEFT_VW / 100) * window.innerWidth;
+                const currentLeft = lerp(startLeftInPx, END_LEFT_PX, t);
+                
+                // SUDDEN ROTATION LOGIC
+                const currentRotation = (t >= ROTATION_THRESHOLD) ? ROTATE_FINAL : 0;
+                
+                const headerOpacity = t; 
+                
+                // --- 3. APPLY STYLES ---
+
+                // LOGO ELEMENT STYLES (Movement, Scale, Rotation)
+                element.style.transform = `
+                    translate(-50%, -50%) 
+                    scale(${currentScale})
+                    rotateY(${currentRotation}deg)
+                `;
+                element.style.top = `${currentTop}px`;
+                element.style.left = `${currentLeft}px`;
+                element.style.boxShadow = (t === 1) ? 'none' : START_SHADOW;
+                
+                // TINY ELEMENT STYLES (Following Logo + Random Offset + INSTANT DISAPPEAR)
+                
+                // Position based on the logo's center, plus the fixed random offset.
+                tinyElement.style.top = `${currentTop + randomY}px`;
+                tinyElement.style.left = `${currentLeft + randomX}px`;
+                
+                // Tiny element disappears INSTANTLY if scroll has started (scrollY > 0)
+                tinyElement.style.opacity = (scrollY === 0) ? 1 : 0;
+                
+                // Header opacity and shadow
+                header.style.opacity = headerOpacity;
+                header.style.boxShadow = `0 4px 12px rgba(0, 0, 0, ${t * 0.15})`;
+            }
+
+            // To ensure responsiveness on resize, we re-run the calculation function.
+            window.addEventListener('resize', handleScroll); 
+            // Attach the function to the window's scroll event
+            window.addEventListener('scroll', handleScroll, { passive: true });
+
+            // Run once on load to set the initial position
+            handleScroll();
         });
     </script>
-
 </body>
 </html>
