@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll-Tweening Freelance Landing Page</title>
+    <style>
+        /* --- CSS for Layout and Base Styles --- */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            /* Ensure enough scrollable content */
+            height: 3000px;
+        }
+
+        /* Fixed Header Bar (The Target for Fade-in) */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px; /* Target height */
+            background-color: white;
+            z-index: 1000;
+            /* Initial state will be set by JS (opacity and box-shadow) */
+        }
+
+        /* The Transitioning Element (The Logo) */
+        .logo-element {
+            /* Base size for calculation */
+            --base-size: 80px;
+            height: var(--base-size);
+            width: var(--base-size);
+            background-color: #4CAF50;
+            position: fixed;
+            top: 0; /* Will be overwritten by JS for centering */
+            left: 0; /* Will be overwritten by JS for centering */
+            z-index: 1001; /* Above the header */
+            border-radius: 4px;
+            /* Initial state (scroll 0) will be set by JS:
+               scale(2.5), centered position
+            */
+            will-change: transform; /* Performance hint for transition */
+        }
+
+        /* Main Content Styling */
+        .content {
+            padding-top: 100vh; /* Push content below the initial viewport */
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .hero-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 999;
+            color: #333;
+            text-align: center;
+        }
+
+        h1 { font-size: 3em; margin-bottom: 0.5em; }
+        p { font-size: 1.2em; color: #666; }
+    </style>
+</head>
+<body>
+
+    <div class="header"></div>
+    <div class="logo-element"></div>
+
+    <div class="hero-text">
+        <h1>Freelance Web Developer</h1>
+        <p>Expert solutions for modern web challenges.</p>
+    </div>
+
+    <div class="content">
+        <h2>Our Services</h2>
+        <p>We provide full-stack development, UI/UX design, and consultation services to bring your vision to life.</p>
+        <div style="height: 1000px; background-color: #e0e0e0; margin-top: 50px;">
+            <p style="padding-top: 400px;">Section 1: Detailed Portfolio</p>
+        </div>
+        <div style="height: 1000px; background-color: #d0d0d0; margin-top: 50px;">
+            <p style="padding-top: 400px;">Section 2: Client Testimonials</p>
+        </div>
+    </div>
+
+    <script>
+        // --- JavaScript for Scroll-Tweening Logic ---
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const logo = document.querySelector('.logo-element');
+            const header = document.querySelector('.header');
+
+            // --- Configuration Constants ---
+            const SCROLL_RANGE = 300; // px over which the transition occurs
+            const BASE_SIZE = 80; // px (CSS variable --base-size)
+            const START_SCALE = 2.5;
+            const END_VISUAL_SIZE = 50; // px (Final visual size for the logo)
+
+            // --- Derived Constants (Target Values) ---
+            // Scale required to make the 80px base element appear 50px
+            const END_SCALE = END_VISUAL_SIZE / BASE_SIZE; // 50 / 80 = 0.625
+            const END_LEFT_PX = 5; // px (5px from left edge)
+            const END_TOP_PX = (80 / 2) - (END_VISUAL_SIZE / 2); // Center 50px logo in 80px header: (80/2) - (50/2) = 15px
+
+
+            /**
+             * Calculates the interpolation factor based on scroll position.
+             * @param {number} scrollY - The current vertical scroll position.
+             * @returns {number} A value between 0 (start) and 1 (end).
+             */
+            function getInterpolationFactor(scrollY) {
+                // Clamps scrollY to the [0, SCROLL_RANGE] interval
+                const clampedScroll = Math.min(Math.max(scrollY, 0), SCROLL_RANGE);
+                // Linear interpolation factor (e.g., 0/300=0, 150/300=0.5, 300/300=1)
+                return clampedScroll / SCROLL_RANGE;
+            }
+
+            /**
+             * Linearly interpolates between a start and end value.
+             * @param {number} startValue
+             * @param {number} endValue
+             * @param {number} factor - The interpolation factor (0 to 1).
+             * @returns {number} The tweened value.
+             */
+            function lerp(startValue, endValue, factor) {
+                return startValue + (endValue - startValue) * factor;
+            }
+
+
+            /**
+             * Updates the logo and header state based on the current scroll.
+             */
+            function updateScrollTween() {
+                const scrollY = window.scrollY;
+                const factor = getInterpolationFactor(scrollY); // 0 (start) to 1 (end)
+
+                // 1. Calculate START Position (Must be Responsive)
+                // Logo is BASE_SIZE * START_SCALE (e.g., 80 * 2.5 = 200px)
+                const logoSizeAtStart = BASE_SIZE * START_SCALE;
+                const startLeft = (window.innerWidth / 2) - (logoSizeAtStart / 2);
+                const startTop = (window.innerHeight / 2) - (logoSizeAtStart / 2);
+
+
+                // 2. TWEENING CALCULATIONS
+                // Position (X)
+                const currentLeft = lerp(startLeft, END_LEFT_PX, factor);
+                // Position (Y)
+                const currentTop = lerp(startTop, END_TOP_PX, factor);
+                // Scale
+                const currentScale = lerp(START_SCALE, END_SCALE, factor);
+                // Header Opacity (Starts at 0, ends at 1)
+                const headerOpacity = factor;
+
+
+                // 3. APPLY STYLES
+                // Logo Transform: Translate and Scale
+                logo.style.transform = `translate(${currentLeft}px, ${currentTop}px) scale(${currentScale})`;
+
+                // Header Fade-in: Opacity and Shadow
+                header.style.opacity = headerOpacity;
+
+                // Apply box-shadow only when the header is visible/transitioning
+                if (headerOpacity > 0) {
+                    // Start fading in the shadow early, e.g., 20% of the way
+                    const shadowFactor = Math.min(factor * 5, 1);
+                    header.style.boxShadow = `0 2px 4px rgba(0, 0, 0, ${0.1 * shadowFactor})`;
+                } else {
+                     header.style.boxShadow = 'none';
+                }
+            }
+
+            // Set the initial state on load and attach the scroll listener
+            window.addEventListener('scroll', updateScrollTween);
+            window.addEventListener('resize', updateScrollTween); // Recalculate start position on resize
+
+            // Run once to set the initial state (scroll=0)
+            updateScrollTween();
+        });
+    </script>
+
+</body>
+</html>

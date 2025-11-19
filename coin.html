@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Flippable Coin</title>
+    <style>
+        /* CSS Styling for the 3D Coin Effect */
+
+        body {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f4f4f9;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sets up the 3D space */
+        .coin-container {
+            width: 200px;
+            height: 200px;
+            perspective: 1000px; /* Defines the 3D viewing perspective */
+        }
+
+        /* The element that will be flipped */
+        .coin {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 1s; /* Smooth animation over 1 second */
+            transform-style: preserve-3d; /* Crucial: tells the browser to treat children in 3D */
+            /* Start state: Heads (0 degrees rotation) */
+            transform: rotateY(0deg); 
+        }
+
+        /* Base style for both sides */
+        .side {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* Crucial: Hides the back of the element when facing away */
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 32px;
+            font-weight: bold;
+            color: white;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Style the Front side (Heads) */
+        .front {
+            background-color: gold;
+            transform: rotateY(0deg); /* Starts facing the viewer */
+            border: 5px solid #ffcc00;
+        }
+
+        /* Style the Back side (Tails) */
+        .back {
+            background-color: darkgoldenrod;
+            /* Flips the back side initially, so it is hidden behind the front */
+            transform: rotateY(180deg);
+            border: 5px solid #b8860b;
+        }
+
+        /* State when the coin is flipped */
+        .coin.flipped {
+            transform: rotateY(180deg);
+        }
+
+        /* Styling for the button */
+        #flip-button {
+            margin-top: 30px;
+            padding: 12px 25px;
+            font-size: 18px;
+            cursor: pointer;
+            border: none;
+            border-radius: 8px;
+            background-color: #3498db;
+            color: white;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        #flip-button:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="coin-container">
+        <div class="coin" id="myCoin">
+            <div class="side front">
+                <p>HEADS</p>
+            </div>
+            <div class="side back">
+                <p>TAILS</p>
+            </div>
+        </div>
+    </div>
+
+    <button id="flip-button">Flip Coin</button>
+
+    <script>
+        // JavaScript for the Flip Interaction
+
+        document.getElementById('flip-button').addEventListener('click', function() {
+            const coin = document.getElementById('myCoin');
+            
+            // Toggles the 'flipped' class.
+            // When the class is added, the CSS transform: rotateY(180deg) is applied.
+            // When the class is removed, it reverts to the original transform: rotateY(0deg).
+            coin.classList.toggle('flipped');
+        });
+    </script>
+
+</body>
+</html>
